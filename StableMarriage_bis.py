@@ -11,6 +11,7 @@ def stable_marriage(participants, workshops, nombre_voeu=5):
     waitlists = {w['ID']: [] for _, w in workshops.iterrows()}
     workshop_capacity = {w['ID']: int(w['Places']) for _, w in workshops.iterrows()}
 
+    
     # Créer une liste de demandes de participants pour chaque voeu
     participant_preferences = []
     for _, participant in participants.iterrows():
@@ -19,8 +20,12 @@ def stable_marriage(participants, workshops, nombre_voeu=5):
             if not pd.isna(workshop_id):
                 participant_preferences.append((participant['Email'], workshop_id, i))
 
+    #print(participant_preferences)
+    random.shuffle(participant_preferences)
+    
     # Trier les demandes par ordre de priorité de voeu (les plus prioritaires en premier)
     participant_preferences.sort(key=lambda x: x[2])
+    print(participant_preferences)
 
     # Traiter chaque demande de participant
     for email, workshop_id, priority in participant_preferences:
