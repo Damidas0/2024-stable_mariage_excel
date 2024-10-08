@@ -11,7 +11,7 @@ def main():
 #    delete_attribution(excel_file)
 
     # Lire les données des participants et des ateliers
-    participants = read_participant_data(excel_file)
+    participants = read_participant_data(excel_file, 'Inscrits_prio')
     print(participants)
     workshops = read_workshop_data(excel_file)
     print(workshops)

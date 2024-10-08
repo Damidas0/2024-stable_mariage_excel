@@ -17,7 +17,7 @@ def load_excel_file():
 
 
 # Fonction pour lire les données des participants
-def read_participant_data(excel_file):
+def read_participant_data(excel_file, sheet_name = 'Inscrits'):
     """Lis les inscriptions dans l'Excel
 
     Args:
@@ -26,7 +26,7 @@ def read_participant_data(excel_file):
     Returns:
         DataFrame:
     """
-    participants = pd.read_excel(excel_file, sheet_name='Inscrits')
+    participants = pd.read_excel(excel_file, sheet_name=sheet_name)
     return participants #pd.read_excel(excel_file, sheet_name='Inscrits')
 
 
@@ -69,6 +69,7 @@ def save_assignments(excel_file, assignments, waitlists):
     
     with pd.ExcelWriter(excel_file, engine='openpyxl', mode='a') as writer:
         assignments_data = []
+        waitlists_data=[]
         
         
         # Convertir les assignations et listes d'attente en DataFrames pour l'export
@@ -77,19 +78,24 @@ def save_assignments(excel_file, assignments, waitlists):
                 #print(assigned_workshops)
                 #print(assignments_data)
                 if(assigned_workshops != []) :
-                    if(e in assignments_data) : 
+                    if(e[0] in assignments_data) : 
                         print("djzqijdqjidiqo")
                         assignments_data[e].append(assigned_workshops)
                     assignments_data.append({'Email':e[0], 'Ateliers Attribués': assigned_workshops })
             
         assignments_df = pd.DataFrame(assignments_data) 
         
+        # Convertir les assignations et listes d'attente en DataFrames pour l'export
+        for waitlist, email in waitlists.items() : 
+            for e in email : 
+                if(waitlist != []) :
+                    if(e[0] in waitlists_data) : 
+                        print("djzqijdqjidiqo")
+                        waitlists_data[e].append(waitlist)
+                    waitlists_data.append({'Email':e[0], 'Ateliers Attribués': waitlist })
+            
+        waitlists_df = pd.DataFrame(waitlists_data) 
         
-        
-        waitlists_df = pd.DataFrame([(workshop, ', '.join(str(emails))) for workshop, emails in waitlists.items()if emails!=[]],
-                                    columns=['Atelier', 'Waitlist'])
-        
-        print(waitlists)
         #for email, assigned_workshops in assignments.items():
         #    assignment_data.append({'Email': email, 'Ateliers Attribués': ', '.join(assigned_workshops)})
         #df = pd.DataFrame(assignment_data)

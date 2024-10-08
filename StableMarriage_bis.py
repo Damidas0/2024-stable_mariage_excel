@@ -21,7 +21,8 @@ def stable_marriage(participants, workshops, nombre_voeu=5):
                 participant_preferences.append((participant['Email'], workshop_id, i))
 
     #print(participant_preferences)
-    random.shuffle(participant_preferences)
+    seed = 1234568745
+    random.Random(seed).shuffle(participant_preferences)
     
     # Trier les demandes par ordre de priorité de voeu (les plus prioritaires en premier)
     participant_preferences.sort(key=lambda x: x[2])
@@ -40,6 +41,8 @@ def stable_marriage(participants, workshops, nombre_voeu=5):
                 assignments[workshop_id].remove(lowest_priority)
                 assignments[workshop_id].append((email, priority))
                 waitlists[workshop_id].append(lowest_priority[0])  # Mettre le participant en liste d'attente
+            else : 
+                waitlists[workshop_id].append((email, priority))
 
     # Résultats
     return assignments, waitlists
