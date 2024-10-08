@@ -30,6 +30,19 @@ def read_participant_data(excel_file, sheet_name = 'Inscrits'):
     return participants #pd.read_excel(excel_file, sheet_name='Inscrits')
 
 
+# Fonction pour lire les données des participants
+def read_attribution(excel_file, sheet_name = 'Attributions'):
+    """Lis les inscriptions dans l'Excel
+
+    Args:
+        excel_file (ExcelFile): fichier excel à lire
+
+    Returns:
+        DataFrame:
+    """
+    participants = pd.read_excel(excel_file, sheet_name=sheet_name)#,skiprows=1)
+    return participants #pd.read_excel(excel_file, sheet_name='Inscrits')
+
 def read_workshop_data(excel_file):
     """Lis les inscriptions dans l'Excel 
 
@@ -85,16 +98,10 @@ def save_assignments(excel_file, assignments, waitlists):
             
         assignments_df = pd.DataFrame(assignments_data) 
         
-        # Convertir les assignations et listes d'attente en DataFrames pour l'export
-        for waitlist, email in waitlists.items() : 
-            for e in email : 
-                if(waitlist != []) :
-                    if(e[0] in waitlists_data) : 
-                        print("djzqijdqjidiqo")
-                        waitlists_data[e].append(waitlist)
-                    waitlists_data.append({'Email':e[0], 'Ateliers Attribués': waitlist })
-            
-        waitlists_df = pd.DataFrame(waitlists_data) 
+        
+        waitlists_df = pd.DataFrame([(workshop, ', '.join(([e[0] for e in emails]))) for workshop, emails in waitlists.items()if emails!=[]],
+                            columns=['Atelier', 'Waitlist'])
+        
         
         #for email, assigned_workshops in assignments.items():
         #    assignment_data.append({'Email': email, 'Ateliers Attribués': ', '.join(assigned_workshops)})
