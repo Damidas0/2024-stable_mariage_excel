@@ -5,12 +5,12 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
 
-def stable_marriage(participants, workshops, nombre_voeu=5):
+def stable_marriage(participants, workshops, nombre_voeu=5, nb_max_atelier = 1):
     # Initialisation des assignations et des listes d'attente
     assignments = {w['ID']: [] for _, w in workshops.iterrows()}
     waitlists = {w['ID']: [] for _, w in workshops.iterrows()}
     workshop_capacity = {w['ID']: int(w['Places']) for _, w in workshops.iterrows()}
-
+    nb_atelier = {p['Email']:0 for _,p in participants.iterrows()}
     
     # Créer une liste de demandes de participants pour chaque voeu
     participant_preferences = []
@@ -21,28 +21,34 @@ def stable_marriage(participants, workshops, nombre_voeu=5):
                 participant_preferences.append((participant['Email'], workshop_id, i))
 
     #print(participant_preferences)
-    seed = 1234568745
+    seed = 45678912
     random.Random(seed).shuffle(participant_preferences)
     
     # Trier les demandes par ordre de priorité de voeu (les plus prioritaires en premier)
     participant_preferences.sort(key=lambda x: x[2])
-    print(participant_preferences)
+    print(participant_preferences[0])
 
     # Traiter chaque demande de participant
     for email, workshop_id, priority in participant_preferences:
         # Si l'atelier n'est pas plein, assigner directement
-        if len(assignments[workshop_id]) < workshop_capacity[workshop_id]:
-            assignments[workshop_id].append((email, priority))
-        else:
-            # Si l'atelier est plein, vérifier si un participant peut être remplacé
-            lowest_priority = max(assignments[workshop_id], key=lambda x: x[1])
-            if priority < lowest_priority[1]:
-                # Remplacer le participant avec la priorité la plus faible
-                assignments[workshop_id].remove(lowest_priority)
+        if (nb_atelier[email] <nb_max_atelier) : 
+            if len(assignments[workshop_id]) < workshop_capacity[workshop_id]:
                 assignments[workshop_id].append((email, priority))
-                waitlists[workshop_id].append(lowest_priority[0])  # Mettre le participant en liste d'attente
-            else : 
-                waitlists[workshop_id].append((email, priority))
+                nb_atelier[email]+=1
+                
+            else:
+                # Si l'atelier est plein, vérifier si un participant peut être remplacé
+                lowest_priority = max(assignments[workshop_id], key=lambda x: x[1])
+                if priority < lowest_priority[1]:
+                    # Remplacer le participant avec la priorité la plus faible
+                    assignments[workshop_id].remove(lowest_priority)
+                    nb_atelier[lowest_priority[0]]-=1
+                    assignments[workshop_id].append((email, priority))
+                    waitlists[workshop_id].append(lowest_priority[0])  # Mettre le participant en liste d'attente
+                    nb_atelier[lowest_priority[0]]+=1
+
+                else : 
+                    waitlists[workshop_id].append((email, priority))
 
     # Résultats
     return assignments, waitlists

@@ -38,9 +38,6 @@ def send_emails(assignments, workshops, smtp_server, smtp_port, sender_email):
         
     
 
-
-    <p>Merci de venir <strong>15 minutes avant</strong> l'heure de début de l'atelier.</p>
-
 """
         
         body_end = "<p>A bientôt!</p>"
